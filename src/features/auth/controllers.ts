@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { authenticate } from './authenticate';
-import { createAuthToken, createUser, getTokenByUserId } from './queries';
+import { createAuthToken, createUser, getTokenByUserId, getUsers } from './queries';
 
 export const signup = async (req: Request, res: Response) => {
   if (!req.body.username || !req.body.password) {
@@ -50,11 +50,10 @@ export const tokenAuth = async (req: Request, res: Response) => {
 };
 
 export const me = async (req: Request, res: Response) => {
-  if (!(req as any).user) {
-    res.status(401).send({
-      message: 'Unauthorized',
-    });
-    return;
-  }
   res.send((req as any).user);
+};
+
+export const listUsers = async (req: Request, res: Response) => {
+  const users = await getUsers();
+  res.send(users);
 };
