@@ -17,6 +17,16 @@ export const createUser = async (createUser: ICreateUser) => {
   return user.rows[0];
 };
 
+export const getUsers = async () => {
+  const users = await query('SELECT * FROM users');
+  return users.rows;
+};
+
+export const getUserById = async (id: number) => {
+  const user = await query('SELECT * FROM users WHERE id = $1', [id]);
+  return user.rows[0];
+};
+
 export const getUserByUsername = async (username: string) => {
   const user = await query('SELECT * FROM users WHERE username = $1', [username]);
   return user.rows[0];
@@ -30,15 +40,15 @@ export const getUserByAuthToken = async (token: string) => {
   return user.rows[0];
 };
 
-export const getTokenByUserId = async (userId: number) => {
-  const token = await query('SELECT * FROM authtokens WHERE user_id = $1', [userId]);
-  return token.rows[0];
-};
-
 export const createAuthToken = async (user: any) => {
   const token = await query('INSERT INTO authtokens (key, user_id) VALUES ($1, $2) RETURNING *', [
     generateAuthToken(),
     user.id,
   ]);
+  return token.rows[0];
+};
+
+export const getTokenByUserId = async (userId: number) => {
+  const token = await query('SELECT * FROM authtokens WHERE user_id = $1', [userId]);
   return token.rows[0];
 };
