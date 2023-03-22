@@ -11,8 +11,12 @@ export const signup = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await createUser(req.body);
-    res.send(user);
+    const { id, username } = await createUser(req.body);
+
+    res.send({
+      id,
+      username,
+    });
   } catch (e) {
     res.status(400).send({
       message: e,
@@ -28,32 +32,47 @@ export const tokenAuth = async (req: Request, res: Response) => {
     return;
   }
 
-  const user = await authenticate(req.body.username, req.body.password);
+  const { id, username } = await authenticate(req.body.username, req.body.password);
 
-  if (!user) {
+  if (!id) {
     res.status(400).send({
       message: 'Invalid username or password',
     });
     return;
   }
 
-  let authToken = await getTokenByUserId((user as any).id);
+  let authToken = await getTokenByUserId(id);
 
   if (!authToken) {
-    authToken = await createAuthToken(user);
+    authToken = await createAuthToken(id);
   }
 
   res.send({
     authToken: (authToken as any).key,
-    user: user,
+    user: {
+      id,
+      username,
+    },
   });
 };
 
 export const me = async (req: Request, res: Response) => {
-  res.send((req as any).user);
+  const { id, username } = (req as any).user;
+
+  res.send({
+    id,
+    username,
+  });
 };
 
 export const listUsers = async (req: Request, res: Response) => {
   const users = await getUsers();
-  res.send(users);
+  res.send(
+    users.map((user: any) => {
+      return {
+        id: user.id,
+        username: user.username,
+      };
+    })
+  );
 };

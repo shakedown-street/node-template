@@ -40,10 +40,10 @@ export const getUserByAuthToken = async (token: string) => {
   return user.rows[0];
 };
 
-export const createAuthToken = async (user: any) => {
+export const createAuthToken = async (userId: any) => {
   const token = await query('INSERT INTO authtokens (key, user_id) VALUES ($1, $2) RETURNING *', [
     generateAuthToken(),
-    user.id,
+    userId,
   ]);
   return token.rows[0];
 };
