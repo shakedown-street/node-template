@@ -22,3 +22,13 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   (req as any).user = user;
   next();
 };
+
+export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+  if (!(req as any).user) {
+    res.status(401).send({
+      message: 'Unauthorized',
+    });
+    return;
+  }
+  next();
+};
