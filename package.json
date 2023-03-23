@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node-dev --respawn src/server.ts",
     "build": "tsc",
-    "migrate": "DATABASE_URL=postgresql://pork:pork@localhost:5433/node_ts_api node-pg-migrate",
+    "migrate": "node-pg-migrate -f ./migrate-config.json",
     "format": "prettier --write 'src/**/*.{ts,js,html,tsx,jsx,json,scss,css,md}'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

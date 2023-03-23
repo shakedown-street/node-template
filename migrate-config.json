@@ -1,0 +1,7 @@
+{
+  "user": "pork",
+  "password": "pork",
+  "host": "localhost",
+  "port": 5433,
+  "database": "node_ts_api"
+}
