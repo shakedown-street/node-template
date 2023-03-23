@@ -1,28 +1,39 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { WebSocketServer } from 'ws';
 
-import { sync } from './db';
 import { authRouter } from './features/auth/routes';
 import { authMiddleware } from './features/auth/middleware';
 
-const app = express();
+const server = express();
+const wss = new WebSocketServer({ port: 8080 });
 
-sync();
+server.use(cors());
 
-app.use(cors());
-
-app.use(bodyParser.json());
-app.use(
+server.use(bodyParser.json());
+server.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
 
-app.use(authMiddleware);
+server.use(authMiddleware);
 
-app.use('/api/auth', authRouter());
+server.use('/api/auth', authRouter());
 
-app.listen(3000, () => {
+wss.on('connection', (ws, req) => {
+  console.log(`Client connected => ${req.socket.remoteAddress}`);
+
+  ws.on('error', console.error);
+
+  ws.on('message', (message) => {
+    console.log(`Received message => ${message}`);
+  });
+
+  ws.send('Message from server');
+});
+
+server.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
