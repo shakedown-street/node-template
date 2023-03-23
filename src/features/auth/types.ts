@@ -2,7 +2,8 @@ export const toUserNode = (user: any) => {
   return {
     id: user.id,
     username: user.username,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    date_joined: user.date_joined,
   };
 };

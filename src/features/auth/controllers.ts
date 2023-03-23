@@ -11,6 +11,13 @@ export const signup = async (req: Request, res: Response) => {
     return;
   }
 
+  if (req.body.username.length < 3) {
+    res.status(400).send({
+      message: 'Username must be at least 3 characters',
+    });
+    return;
+  }
+
   if (req.body.password1.length < 8) {
     res.status(400).send({
       message: 'Password must be at least 8 characters',

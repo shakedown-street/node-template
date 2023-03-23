@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn src/server.ts",
-    "sync": "ts-node src/sync.ts",
     "build": "tsc",
+    "migrate": "DATABASE_URL=postgresql://pork:pork@localhost:5433/node_ts_api node-pg-migrate",
     "format": "prettier --write 'src/**/*.{ts,js,html,tsx,jsx,json,scss,css,md}'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +16,7 @@
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "node-pg-migrate": "^6.2.2",
     "pg": "^8.10.0",
     "ws": "^8.13.0"
   },
