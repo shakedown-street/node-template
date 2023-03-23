@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { authenticate } from './authenticate';
 import { createAuthToken, createUser, getTokenByUserId, getUsers } from './queries';
+import { toUserNode } from './types';
 
 export const signup = async (req: Request, res: Response) => {
   if (!req.body.username || !req.body.password) {
@@ -11,12 +12,8 @@ export const signup = async (req: Request, res: Response) => {
   }
 
   try {
-    const { id, username } = await createUser(req.body);
-
-    res.send({
-      id,
-      username,
-    });
+    const user = await createUser(req.body);
+    res.send(toUserNode(user));
   } catch (e) {
     res.status(400).send({
       message: e,
@@ -32,47 +29,38 @@ export const tokenAuth = async (req: Request, res: Response) => {
     return;
   }
 
-  const { id, username } = await authenticate(req.body.username, req.body.password);
+  const user = await authenticate(req.body.username, req.body.password);
 
-  if (!id) {
+  if (!user) {
     res.status(400).send({
       message: 'Invalid username or password',
     });
     return;
   }
 
-  let authToken = await getTokenByUserId(id);
+  let authToken = await getTokenByUserId(user.id);
 
   if (!authToken) {
-    authToken = await createAuthToken(id);
+    authToken = await createAuthToken(user.id);
   }
 
   res.send({
     authToken: (authToken as any).key,
-    user: {
-      id,
-      username,
-    },
+    user: toUserNode(user),
   });
 };
 
 export const me = async (req: Request, res: Response) => {
-  const { id, username } = (req as any).user;
+  const user = (req as any).user;
 
-  res.send({
-    id,
-    username,
-  });
+  res.send(toUserNode(user));
 };
 
 export const listUsers = async (req: Request, res: Response) => {
   const users = await getUsers();
   res.send(
     users.map((user: any) => {
-      return {
-        id: user.id,
-        username: user.username,
-      };
+      return toUserNode(user);
     })
   );
 };
