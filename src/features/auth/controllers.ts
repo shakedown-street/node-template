@@ -4,19 +4,36 @@ import { createAuthToken, createUser, getTokenByUserId, getUsers } from './queri
 import { toUserNode } from './types';
 
 export const signup = async (req: Request, res: Response) => {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.username || !req.body.password1 || !req.body.password2) {
     res.status(400).send({
       message: 'Username and password required',
     });
     return;
   }
 
-  try {
-    const user = await createUser(req.body);
-    res.send(toUserNode(user));
-  } catch (e) {
+  if (req.body.password1.length < 8) {
     res.status(400).send({
-      message: e,
+      message: 'Password must be at least 8 characters',
+    });
+    return;
+  }
+
+  if (req.body.password1 !== req.body.password2) {
+    res.status(400).send({
+      message: 'Passwords do not match',
+    });
+    return;
+  }
+
+  try {
+    const user = await createUser({
+      username: req.body.username,
+      password: req.body.password1,
+    });
+    res.send(toUserNode(user));
+  } catch (e: any) {
+    res.status(400).send({
+      message: e.detail,
     });
   }
 };
