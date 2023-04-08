@@ -14,8 +14,8 @@ exports.up = (pgm) => {
   `);
   pgm.createTable('users', {
     id: 'id',
-    username: {
-      type: 'VARCHAR(64)',
+    email: {
+      type: 'VARCHAR(256)',
       unique: true,
       notNull: true,
     },
@@ -35,7 +35,7 @@ exports.up = (pgm) => {
       default: pgm.func('NOW()'),
     },
   });
-  pgm.createTable('authtokens', {
+  pgm.createTable('auth_tokens', {
     key: {
       type: 'VARCHAR(64)',
       primaryKey: true,
@@ -62,5 +62,5 @@ exports.down = (pgm) => {
   pgm.dropTable('users', {
     cascade: true,
   });
-  pgm.dropTable('authtokens');
+  pgm.dropTable('auth_tokens');
 };
