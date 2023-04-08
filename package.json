@@ -1,8 +1,6 @@
 {
-  "name": "ts-api",
+  "name": "node-template",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn src/server.ts",
     "build": "tsc",
@@ -10,8 +8,6 @@
     "format": "prettier --write 'src/**/*.{ts,js,html,tsx,jsx,json,scss,css,md}'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
