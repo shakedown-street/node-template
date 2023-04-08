@@ -18,14 +18,10 @@ fi
 
 mkdir $PROJECT_NAME
 
-git clone --branch $CLONE_BRANCH --single-branch https://github.com/shakedown-street/node-template.git $PROJECT_NAME
+git clone -b $CLONE_BRANCH --single-branch https://github.com/shakedown-street/node-template.git $PROJECT_NAME
 cd $PROJECT_NAME
 rm -rf .git
 rm startproject.sh
 
 find . -type f -print0 | xargs -0 sed -i "s/PROJECT_NAME/$PROJECT_NAME/g"
 npm install
-
-
-
-
