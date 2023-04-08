@@ -16,7 +16,7 @@ if [ -d $PWD/$PROJECT_NAME ]; then
 fi
 
 
-mkdir "$PROJECT_NAME"
+mkdir $PROJECT_NAME
 
 git clone --branch $CLONE_BRANCH --single-branch https://github.com/shakedown-street/node-template.git $PROJECT_NAME
 cd $PROJECT_NAME
