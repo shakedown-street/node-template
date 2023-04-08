@@ -4,19 +4,21 @@ PROJECT_NAME="$1"
 
 CLONE_BRANCH="main"
 
-if [ -z "$PROJECT_NAME" ]; then
-    echo "Please provide a project name"
+if [[ -z "${PROJECT_NAME// }" ]]; then
+    echo "You must give a project name."
     exit 1
 fi
 
-if [ -d "$PROJECT_NAME" ]; then
-    echo "Project directory already exists"
+# Check for directory collision
+if [ -d $PWD/$PROJECT_NAME ]; then
+    echo "$PROJECT_NAME already exists in this directory."
     exit 1
 fi
+
 
 mkdir "$PROJECT_NAME"
 
-git clone --branch "$CLONE_BRANCH" --single-branch https://github.com/shakedown-street/node-template.git $PROJECT_NAME
+git clone --branch $CLONE_BRANCH --single-branch https://github.com/shakedown-street/node-template.git $PROJECT_NAME
 cd $PROJECT_NAME
 rm -rf .git
 rm startproject.sh
