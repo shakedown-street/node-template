@@ -1,12 +1,12 @@
 import express from 'express';
-import { listUsers, me, tokenAuth, signup } from './controllers';
+import { readUsers, readMe, tokenAuth, signup } from './controllers';
 import { requireAuth } from './middleware';
 
 export const authRouter = () => {
   const router = express.Router();
 
-  router.get('/', requireAuth, me);
-  router.get('/users', requireAuth, listUsers);
+  router.get('/user', requireAuth, readMe);
+  router.get('/users', requireAuth, readUsers);
   router.post('/login', tokenAuth);
   router.post('/signup', signup);
 

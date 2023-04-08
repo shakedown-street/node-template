@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { authenticate } from './authenticate';
-import { createAuthToken, createUser, getTokenByUserId, getUsers } from './queries';
-import { toUserNode } from './types';
+import { insertAuthToken, insertUser, selectAuthTokenById, selectUsers } from './queries';
+import { userSerializer } from './serializers';
 
 export const signup = async (req: Request, res: Response) => {
-  if (!req.body.username || !req.body.password1 || !req.body.password2) {
+  if (!req.body.email || !req.body.password1 || !req.body.password2) {
     res.status(400).send({
-      message: 'Username and password required',
+      message: 'Email and password required',
     });
     return;
   }
 
-  if (req.body.username.length < 3) {
+  if (req.body.email.length < 3) {
     res.status(400).send({
-      message: 'Username must be at least 3 characters',
+      message: 'Email must be at least 3 characters',
     });
     return;
   }
@@ -33,11 +33,11 @@ export const signup = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await createUser({
-      username: req.body.username,
+    const user = await insertUser({
+      email: req.body.email,
       password: req.body.password1,
     });
-    res.send(toUserNode(user));
+    res.send(userSerializer(user));
   } catch (e: any) {
     res.status(400).send({
       message: e.detail,
@@ -46,45 +46,45 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 export const tokenAuth = async (req: Request, res: Response) => {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.email || !req.body.password) {
     res.status(400).send({
-      message: 'Username and password required',
+      message: 'Email and password required',
     });
     return;
   }
 
-  const user = await authenticate(req.body.username, req.body.password);
+  const user = await authenticate(req.body.email, req.body.password);
 
   if (!user) {
     res.status(400).send({
-      message: 'Invalid username or password',
+      message: 'Invalid email or password',
     });
     return;
   }
 
-  let authToken = await getTokenByUserId(user.id);
+  let authToken = await selectAuthTokenById(user.id);
 
   if (!authToken) {
-    authToken = await createAuthToken(user.id);
+    authToken = await insertAuthToken(user.id);
   }
 
   res.send({
-    authToken: (authToken as any).key,
-    user: toUserNode(user),
+    token: authToken.key,
+    user: userSerializer(user),
   });
 };
 
-export const me = async (req: Request, res: Response) => {
+export const readMe = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
-  res.send(toUserNode(user));
+  res.send(userSerializer(user));
 };
 
-export const listUsers = async (req: Request, res: Response) => {
-  const users = await getUsers();
+export const readUsers = async (req: Request, res: Response) => {
+  const users = await selectUsers();
   res.send(
     users.map((user: any) => {
-      return toUserNode(user);
+      return userSerializer(user);
     })
   );
 };

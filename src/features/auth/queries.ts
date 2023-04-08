@@ -1,54 +1,54 @@
 import { query } from '../../db';
 import { generateAuthToken, hashPassword } from './utils';
 
-export interface ICreateUser {
-  username: string;
+export interface InsertUser {
+  email: string;
   password: string;
 }
 
-export const createUser = async (createUser: ICreateUser) => {
+export const insertUser = async (createUser: InsertUser) => {
   const hashedPassword = await hashPassword(createUser.password);
 
-  const user = await query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [
-    createUser.username,
+  const user = await query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *', [
+    createUser.email,
     hashedPassword,
   ]);
 
   return user.rows[0];
 };
 
-export const getUsers = async () => {
+export const selectUsers = async () => {
   const users = await query('SELECT * FROM users');
   return users.rows;
 };
 
-export const getUserById = async (id: number) => {
+export const selectUserById = async (id: number) => {
   const user = await query('SELECT * FROM users WHERE id = $1', [id]);
   return user.rows[0];
 };
 
-export const getUserByUsername = async (username: string) => {
-  const user = await query('SELECT * FROM users WHERE username = $1', [username]);
+export const selectUserByEmail = async (email: string) => {
+  const user = await query('SELECT * FROM users WHERE email = $1', [email]);
   return user.rows[0];
 };
 
-export const getUserByAuthToken = async (token: string) => {
+export const selectUserByAuthToken = async (token: string) => {
   const user = await query(
-    'SELECT users.* FROM users INNER JOIN authtokens ON users.id = authtokens.user_id WHERE authtokens.key = $1',
+    'SELECT users.* FROM users INNER JOIN auth_tokens ON users.id = auth_tokens.user_id WHERE auth_tokens.key = $1',
     [token]
   );
   return user.rows[0];
 };
 
-export const createAuthToken = async (userId: any) => {
-  const token = await query('INSERT INTO authtokens (key, user_id) VALUES ($1, $2) RETURNING *', [
+export const insertAuthToken = async (userId: any) => {
+  const token = await query('INSERT INTO auth_tokens (key, user_id) VALUES ($1, $2) RETURNING *', [
     generateAuthToken(),
     userId,
   ]);
   return token.rows[0];
 };
 
-export const getTokenByUserId = async (userId: number) => {
-  const token = await query('SELECT * FROM authtokens WHERE user_id = $1', [userId]);
+export const selectAuthTokenById = async (userId: number) => {
+  const token = await query('SELECT * FROM auth_tokens WHERE user_id = $1', [userId]);
   return token.rows[0];
 };

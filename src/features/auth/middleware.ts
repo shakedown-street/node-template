@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getUserByAuthToken } from './queries';
+import { selectUserByAuthToken } from './queries';
 import { getAuthorizationHeader } from './utils';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -11,7 +11,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     return;
   }
 
-  const user = await getUserByAuthToken(token);
+  const user = await selectUserByAuthToken(token);
 
   if (!user) {
     (req as any).user = null;
