@@ -16,7 +16,7 @@ fi
 
 mkdir "$PROJECT_NAME"
 
-git clone --branch "$CLONE_BRANCH" --single-branch --depth https://github.com/shakedown-street/node-template.git $PROJECT_NAME
+git clone --branch "$CLONE_BRANCH" --single-branch https://github.com/shakedown-street/node-template.git $PROJECT_NAME
 cd $PROJECT_NAME
 rm -rf .git
 rm startproject.sh
