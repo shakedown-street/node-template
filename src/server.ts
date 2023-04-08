@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -17,6 +18,8 @@ app.use(
     extended: true,
   })
 );
+
+app.use('/static', express.static(path.join(__dirname, 'static')));
 
 app.use(authMiddleware);
 

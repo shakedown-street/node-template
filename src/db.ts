@@ -1,11 +1,11 @@
 import { Pool } from 'pg';
 
 export const pool = new Pool({
-  user: 'PROJECT_NAME',
-  password: 'PROJECT_NAME',
-  database: 'PROJECT_NAME',
+  user: 'pork',
+  password: 'pork',
+  database: 'node_ts_api',
   host: 'localhost',
-  port: 5432,
+  port: 5433,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
