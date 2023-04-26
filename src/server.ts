@@ -1,30 +1,14 @@
-import path from 'path';
 import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
 
-import { authRouter } from './features/auth/routes';
-import { authMiddleware } from './features/auth/middleware';
-
-// Start express server
+import { middleware } from './middleware';
+import { router } from './router';
+import { SERVER_PORT } from './settings';
 
 const app = express();
 
-app.use(cors());
+middleware(app);
+router(app);
 
-app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-
-app.use('/static', express.static(path.join(__dirname, 'static')));
-
-app.use(authMiddleware);
-
-app.use('/api/auth', authRouter());
-
-app.listen(3000, () => {
+app.listen(SERVER_PORT, () => {
   console.log('Express listening on http://localhost:3000');
 });

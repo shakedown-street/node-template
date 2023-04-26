@@ -1,11 +1,12 @@
 import { Pool } from 'pg';
+import { DATABASE } from './settings';
 
 export const pool = new Pool({
-  user: 'PROJECT_NAME',
-  password: 'PROJECT_NAME',
-  database: 'PROJECT_NAME',
-  host: 'localhost',
-  port: 5433,
+  user: DATABASE.user,
+  password: DATABASE.password,
+  database: DATABASE.name,
+  host: DATABASE.host,
+  port: DATABASE.port,
 });
 
 export const query = async (text: string, params: any[] = []) => {
