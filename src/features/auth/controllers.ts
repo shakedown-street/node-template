@@ -88,14 +88,8 @@ export const signup = async (req: Request, res: Response) => {
   res.send(user);
 };
 
-export const getRequestUser = async (req: Request, res: Response) => {
+export const getAuthUser = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
   res.send(user);
-};
-
-export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await db.select().from(usersTable);
-
-  res.send(users);
 };

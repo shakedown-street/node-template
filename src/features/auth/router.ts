@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getRequestUser, login, signup } from './controllers';
+import { getAuthUser, login, signup } from './controllers';
 import { requireAuth } from './middleware';
 
 export const authRouter = () => {
@@ -7,8 +7,7 @@ export const authRouter = () => {
 
   router.post('/login', login);
   router.post('/signup', signup);
-  router.get('/user', requireAuth, getRequestUser);
-  router.get('/users', requireAuth, getAllUsers);
+  router.get('/user', requireAuth, getAuthUser);
 
   return router;
 };
