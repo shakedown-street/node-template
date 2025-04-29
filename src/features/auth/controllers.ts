@@ -1,7 +1,49 @@
+import { eq } from 'drizzle-orm';
 import { Request, Response } from 'express';
+import { db } from '../../db';
+import { authTokensTable, usersTable } from '../../db/schema';
 import { authenticate } from './authenticate';
-import { insertAuthToken, insertUser, selectAuthTokenById, selectUsers } from './queries';
-import { userSerializer } from './serializers';
+import { generateAuthToken, hashPassword } from './utils';
+
+export const login = async (req: Request, res: Response) => {
+  if (!req.body.email || !req.body.password) {
+    res.status(400).send({
+      message: 'Email and password required',
+    });
+    return;
+  }
+
+  const user = await authenticate(req.body.email, req.body.password);
+
+  if (!user) {
+    res.status(400).send({
+      message: 'Invalid email or password',
+    });
+    return;
+  }
+
+  let authToken = await db
+    .select()
+    .from(authTokensTable)
+    .where(eq(authTokensTable.userId, user.id))
+    .then((rows) => rows[0]);
+
+  if (!authToken) {
+    authToken = await db
+      .insert(authTokensTable)
+      .values({
+        key: generateAuthToken(),
+        userId: user.id,
+      })
+      .returning()
+      .then((rows) => rows[0]);
+  }
+
+  res.send({
+    token: authToken.key,
+    user,
+  });
+};
 
 export const signup = async (req: Request, res: Response) => {
   if (!req.body.email || !req.body.password1 || !req.body.password2) {
@@ -32,59 +74,28 @@ export const signup = async (req: Request, res: Response) => {
     return;
   }
 
-  try {
-    const user = await insertUser({
+  const hashedPassword = await hashPassword(req.body.password1);
+
+  const user = await db
+    .insert(usersTable)
+    .values({
       email: req.body.email,
-      password: req.body.password1,
-    });
-    res.send(userSerializer(user));
-  } catch (e: any) {
-    res.status(400).send({
-      message: e.detail,
-    });
-  }
+      password: hashedPassword,
+    })
+    .returning()
+    .then((rows) => rows[0]);
+
+  res.send(user);
 };
 
-export const tokenAuth = async (req: Request, res: Response) => {
-  if (!req.body.email || !req.body.password) {
-    res.status(400).send({
-      message: 'Email and password required',
-    });
-    return;
-  }
-
-  const user = await authenticate(req.body.email, req.body.password);
-
-  if (!user) {
-    res.status(400).send({
-      message: 'Invalid email or password',
-    });
-    return;
-  }
-
-  let authToken = await selectAuthTokenById(user.id);
-
-  if (!authToken) {
-    authToken = await insertAuthToken(user.id);
-  }
-
-  res.send({
-    token: authToken.key,
-    user: userSerializer(user),
-  });
-};
-
-export const readMe = async (req: Request, res: Response) => {
+export const getRequestUser = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
-  res.send(userSerializer(user));
+  res.send(user);
 };
 
-export const readUsers = async (req: Request, res: Response) => {
-  const users = await selectUsers();
-  res.send(
-    users.map((user: any) => {
-      return userSerializer(user);
-    })
-  );
+export const getAllUsers = async (req: Request, res: Response) => {
+  const users = await db.select().from(usersTable);
+
+  res.send(users);
 };

@@ -1,5 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { selectUserByAuthToken } from './queries';
+import { eq } from 'drizzle-orm';
+import { NextFunction, Request, Response } from 'express';
+import { db } from '../../db';
+import { authTokensTable, usersTable } from '../../db/schema';
 import { getAuthorizationHeader } from './utils';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -11,7 +13,12 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     return;
   }
 
-  const user = await selectUserByAuthToken(token);
+  const user = await db
+    .select()
+    .from(usersTable)
+    .innerJoin(authTokensTable, eq(authTokensTable.userId, usersTable.id))
+    .where(eq(authTokensTable.key, token))
+    .then((rows) => rows[0].users);
 
   if (!user) {
     (req as any).user = null;

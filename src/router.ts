@@ -1,5 +1,5 @@
-import path from 'path';
 import express from 'express';
+import path from 'path';
 import { authRouter } from './features/auth/routes';
 import { STATIC_DIR, STATIC_URL, TEMPLATE_DIR } from './settings';
 

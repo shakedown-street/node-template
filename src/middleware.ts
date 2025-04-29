@@ -1,7 +1,6 @@
-import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-
+import express from 'express';
 import { authMiddleware } from './features/auth/middleware';
 
 export const middleware = (app: express.Express) => {

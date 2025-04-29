@@ -1,5 +1,4 @@
 import express from 'express';
-
 import { middleware } from './middleware';
 import { router } from './router';
 import { SERVER_PORT } from './settings';

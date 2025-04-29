@@ -1,6 +1,6 @@
+import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { Request } from 'express';
-import bcrypt from 'bcrypt';
 
 export const hashPassword = async (password: string) => {
   const hash = await bcrypt.hash(password, 10);
